@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অঙ্গনা ট্রেন্ডস | দুর্গাপূজা স্পেশাল শাড়ি সংগ্রহ</title>
+  
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background-color: #fdfbf7;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="pb-24 md:pb-12 text-gray-800">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-rose-900 text-amber-200 text-xs text-center py-2 px-4 tracking-wide font-medium">
+    🪔 দুর্গাপূজা উপলক্ষে সারা বাংলাদেশে ক্যাশ অন ডেলিভারি এবং বিশেষ হোম ডেলিভারি সুবিধা! 🪔
+  </div>
+
+  <!-- Header Section (Admin Trigger on Logo Double-Click) -->
+  <header class="sticky top-0 z-40 glass-effect border-b border-amber-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Secret Admin Trigger: Double Click on Logo -->
+      <div onclick="handleLogoSecretClick()" class="flex items-center space-x-3 cursor-pointer select-none">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-800 to-amber-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+          অ
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-rose-950 tracking-tight leading-none">অঙ্গনা ট্রেন্ডস</h1>
+          <p class="text-[10px] text-amber-700 uppercase tracking-widest font-semibold">Angona Trendz</p>
+        </div>
+      </div>
+
+      <!-- Cart Button -->
+      <div class="flex items-center space-x-2">
+        <button onclick="toggleCart()" class="relative p-2.5 text-gray-700 hover:text-rose-800 transition">
+          <i class="fa-solid fa-bag-shopping text-xl"></i>
+          <span id="cartCount" class="absolute top-1 right-1 bg-rose-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Durga Puja Hero Banner -->
+  <section class="max-w-7xl mx-auto p-4">
+    <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-rose-950 via-rose-900 to-amber-900 text-white p-6 md:p-12 shadow-xl">
+      <div class="relative z-10 max-w-lg space-y-3">
+        <span class="bg-amber-500/20 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-500/30 font-medium">🪔 দুর্গাপূজা স্পেশাল কালেকশন</span>
+        <h2 class="text-2xl md:text-4xl font-bold leading-tight">পূজার উৎসবে সাজুন এক্সক্লুসিভ ঐতিহ্যবাহী শাড়িতে</h2>
+        <p class="text-rose-100 text-sm md:text-base opacity-90">অঞ্জলি থেকে শুরু করে সিঁদুর খেলা—পূজার প্রতিটি দিনকে স্মরণীয় করে রাখতে সেরা মানের শাড়ি সংগ্রহ।</p>
+        <div class="pt-2">
+          <a href="#products" class="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-rose-950 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-lg">
+            <span>পূজা কালেকশন দেখুন</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Selection -->
+  <section class="max-w-7xl mx-auto px-4 my-4">
+    <div class="flex items-center space-x-2 overflow-x-auto hide-scrollbar py-2">
+      <button onclick="filterCategory('All')" class="cat-btn active bg-rose-900 text-white px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm">সব পূজা কালেকশন</button>
+      <button onclick="filterCategory('Jamdani')" class="cat-btn bg-white text-gray-700 hover:bg-rose-50 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border border-gray-200 transition">জামদানি শাড়ি</button>
+      <button onclick="filterCategory('Katan')" class="cat-btn bg-white text-gray-700 hover:bg-rose-50 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border border-gray-200 transition">কাতান ও সিল্ক</button>
+      <button onclick="filterCategory('Cotton')" class="cat-btn bg-white text-gray-700 hover:bg-rose-50 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border border-gray-200 transition">সুতি ও তাঁত</button>
+      <button onclick="filterCategory('Party')" class="cat-btn bg-white text-gray-700 hover:bg-rose-50 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap border border-gray-200 transition">পার্টি ও জর্জেট</button>
+    </div>
+  </section>
+
+  <!-- Product Grid Section -->
+  <main id="products" class="max-w-7xl mx-auto px-4 mb-12">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-900">পূজা স্পেশাল শাড়ি সমূহ</h3>
+      <span id="productCount" class="text-xs text-gray-500 font-medium">লোড হচ্ছে...</span>
+    </div>
+    
+    <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <!-- Dynamic Products -->
+    </div>
+  </main>
+
+  <!-- Cart Sidebar -->
+  <div id="cartSidebar" class="fixed inset-0 z-50 bg-black/50 hidden backdrop-blur-sm transition-opacity">
+    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
+      <div class="p-4 bg-rose-900 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <h3 class="font-bold">আপনার শপিং ব্যাগ</h3>
+        </div>
+        <button onclick="toggleCart()" class="text-white hover:text-amber-200"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+
+      <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <!-- Cart Items List -->
+      </div>
+
+      <div class="p-4 border-t bg-gray-50 space-y-3">
+        <div class="flex justify-between font-bold text-gray-800">
+          <span>মোট মূল্য:</span>
+          <span id="cartTotal">৳ 0</span>
+        </div>
+        <button onclick="alert('আপনার অর্ডারটি সফলভাবে গ্রহণ করা হচ্ছে। আপনি হোয়াটসঅ্যাপেও কন্টাক্ট করতে পারেন।')" class="w-full bg-rose-900 text-white py-3 rounded-xl font-bold hover:bg-rose-950 transition flex items-center justify-center space-x-2">
+          <span>অর্ডার সম্পন্ন করুন</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Secret Admin Login Modal -->
+  <div id="adminLoginModal" class="fixed inset-0 z-50 bg-black/70 hidden backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-rose-100">
+      <div class="text-center space-y-2 mb-6">
+        <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mx-auto text-rose-900 text-xl">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900">গোপন অ্যাডমিন প্যানেল</h3>
+        <p class="text-xs text-gray-500">Firebase Encrypted Login</p>
+      </div>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">অ্যাডমিন ইমেইল</label>
+          <input type="email" id="adminEmail" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-rose-800" placeholder="admin@angonatrendz.com">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">পাসওয়ার্ড</label>
+          <input type="password" id="adminPassword" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-rose-800" placeholder="••••••••">
+        </div>
+        <div id="loginError" class="text-xs text-red-600 hidden font-semibold"></div>
+
+        <div class="flex space-x-2 pt-2">
+          <button type="button" onclick="closeAdminModal()" class="w-1/2 py-2.5 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">বাতিল</button>
+          <button type="submit" class="w-1/2 bg-rose-900 text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-rose-950 transition">লগইন করুন</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="adminPanel" class="fixed inset-0 z-50 bg-black/60 hidden backdrop-blur-sm flex justify-end">
+    <div class="bg-white w-full max-w-2xl h-full flex flex-col shadow-2xl">
+      <div class="p-4 bg-rose-950 text-white flex items-center justify-between border-b border-rose-800">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-lock text-amber-400"></i>
+          <h3 class="font-bold">অ্যাডমিন কন্ট্রোল ড্যাশবোর্ড</h3>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="handleAdminLogout()" class="text-xs bg-red-800 hover:bg-red-700 px-3 py-1.5 rounded-lg text-white font-medium">লগআউট</button>
+          <button onclick="closeAdminPanel()" class="text-gray-300 hover:text-white p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-6">
+        <!-- Add Product Form -->
+        <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 space-y-4">
+          <h4 class="font-bold text-rose-950 text-sm flex items-center space-x-2">
+            <i class="fa-solid fa-plus-circle text-rose-800"></i>
+            <span>নতুন পূজা স্পেশাল শাড়ি যোগ করুন</span>
+          </h4>
+          <form onsubmit="handleAddProduct(event)" class="grid grid-cols-2 gap-3">
+            <div class="col-span-2 md:col-span-1">
+              <label class="block text-xs font-semibold text-gray-700 mb-1">শাড়ির নাম</label>
+              <input type="text" id="pName" required class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-800 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 mb-1">ক্যাটাগরি</label>
+              <select id="pCategory" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-800 focus:outline-none">
+                <option value="Jamdani">জামদানি শাড়ি</option>
+                <option value="Katan">কাতান ও সিল্ক</option>
+                <option value="Cotton">সুতি ও তাঁত</option>
+                <option value="Party">পার্টি ও জর্জেট</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 mb-1">মূল্য (৳)</label>
+              <input type="number" id="pPrice" required class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-800 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 mb-1">ফেব্রিক / বিবরণ</label>
+              <input type="text" id="pFabric" placeholder="যেমন: লাল-সাদা লাল পেড় জামদানি" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-800 focus:outline-none">
+            </div>
+            <div class="col-span-2">
+              <label class="block text-xs font-semibold text-gray-700 mb-1">ছবি লিংক (Image URL)</label>
+              <input type="url" id="pImg" required placeholder="https://..." class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-800 focus:outline-none">
+            </div>
+            <div class="col-span-2">
+              <button type="submit" class="w-full bg-rose-900 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-rose-950 transition">প্রোডাক্ট সেভ করুন</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Managed Product List -->
+        <div class="space-y-3">
+          <h4 class="font-bold text-gray-900 text-sm">বর্তমান শাড়ির স্টক</h4>
+          <div id="adminProductList" class="space-y-2">
+            <!-- Dynamic Admin Items -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WhatsApp Floating Action Button (01642485254) -->
+  <a href="https://wa.me/8801642485254" target="_blank" class="fixed bottom-20 right-4 z-30 bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl hover:bg-emerald-700 transition flex items-center space-x-2">
+    <i class="fa-brands fa-whatsapp text-2xl"></i>
+    <span class="text-xs font-bold pr-1 hidden md:inline">সরাসরি হোয়াটসঅ্যাপ</span>
+  </a>
+
+  <!-- Mobile Bottom Sticky Menu -->
+  <div class="fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 py-2 px-6 flex justify-around items-center md:hidden shadow-lg">
+    <a href="#" class="flex flex-col items-center text-rose-900">
+      <i class="fa-solid fa-house text-lg"></i>
+      <span class="text-[10px] font-semibold mt-0.5">হোম</span>
+    </a>
+    <button onclick="toggleCart()" class="flex flex-col items-center text-gray-500 relative">
+      <i class="fa-solid fa-bag-shopping text-lg"></i>
+      <span class="text-[10px] font-semibold mt-0.5">কার্ট</span>
+    </button>
+    <a href="https://wa.me/8801642485254" target="_blank" class="flex flex-col items-center text-emerald-600">
+      <i class="fa-brands fa-whatsapp text-xl"></i>
+      <span class="text-[10px] font-semibold mt-0.5">হোয়াটসঅ্যাপ</span>
+    </a>
+  </div>
+
+  <!-- JavaScript Engine -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDummyKeyForSecurityDemo2026",
+      authDomain: "angonatrendz.firebaseapp.com",
+      projectId: "angonatrendz",
+      storageBucket: "angonatrendz.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+
+    let products = [
+      { id: '1', name: 'পূজা স্পেশাল লাল-সাদা ঢাকাই জামদানি', category: 'Jamdani', price: 4800, fabric: 'কটন প্লাস সিল্ক (পূজা স্পেশাল)', img: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600' },
+      { id: '2', name: 'উৎসবের রয়্যাল বেনারসি কাতান', category: 'Katan', price: 9200, fabric: 'পিওর কাতান সিল্ক', img: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=600' },
+      { id: '3', name: 'অঞ্জলি স্পেশাল প্রেন্টেড সুতি শাড়ি', category: 'Cotton', price: 1950, fabric: '১০০% সুতি', img: 'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&q=80&w=600' },
+      { id: '4', name: 'সন্ধ্যা আরতি জর্জেট পার্টি শাড়ি', category: 'Party', price: 3500, fabric: 'জর্জেট উইথ এম্ব্রয়ডারি', img: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=600' }
+    ];
+
+    let cart = [];
+    let currentCategory = 'All';
+    let logoClickCounter = 0;
+    let logoClickTimer = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+      updateCartUI();
+    });
+
+    // Secret Keyboard Shortcut: Ctrl + Shift + A
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        openAdminModal();
+      }
+    });
+
+    // Secret Trigger: Double Tap/Click on Logo
+    function handleLogoSecretClick() {
+      logoClickCounter++;
+      if (logoClickCounter === 1) {
+        logoClickTimer = setTimeout(() => {
+          logoClickCounter = 0;
+        }, 500);
+      } else if (logoClickCounter === 2) {
+        clearTimeout(logoClickTimer);
+        logoClickCounter = 0;
+        openAdminModal();
+      }
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      const filtered = currentCategory === 'All' ? products : products.filter(p => p.category === currentCategory);
+      
+      document.getElementById('productCount').innerText = `${filtered.length} টি শাড়ি দেখানো হচ্ছে`;
+
+      grid.innerHTML = filtered.map(product => `
+        <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div class="relative">
+            <img src="${product.img}" alt="${product.name}" class="w-full h-52 object-cover">
+            <span class="absolute top-2 left-2 bg-rose-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+              ${product.category}
+            </span>
+          </div>
+          
+          <div class="p-3 space-y-1.5 flex-1 flex flex-col justify-between">
+            <div>
+              <h4 class="font-bold text-gray-900 text-xs md:text-sm line-clamp-1">${product.name}</h4>
+              <p class="text-[11px] text-gray-500">${product.fabric}</p>
+              <p class="text-sm font-bold text-rose-900 mt-1">৳ ${product.price.toLocaleString('bn-BD')}</p>
+            </div>
+
+            <div class="space-y-1.5 pt-2">
+              <button onclick="addToCart('${product.id}')" class="w-full bg-rose-900 hover:bg-rose-950 text-white py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center space-x-1">
+                <i class="fa-solid fa-cart-plus text-[10px]"></i>
+                <span>কার্টে রাখুন</span>
+              </button>
+              
+              <a href="https://wa.me/8801642485254?text=${encodeURIComponent(`হ্যালো! আমি দুর্গাপূজা কালেকশনের এই শাড়িটি ইনকোয়ারি/অর্ডার করতে চাই:\n\n*নাম:* ${product.name}\n*ক্যাটাগরি:* ${product.category}\n*মূল্য:* ৳ ${product.price}\n*ফেব্রিক:* ${product.fabric}`)}" target="_blank" class="w-full border border-emerald-600 text-emerald-700 hover:bg-emerald-50 py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center space-x-1">
+                <i class="fa-brands fa-whatsapp text-emerald-600"></i>
+                <span>ইনবক্স করুন</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.remove('bg-rose-900', 'text-white');
+        btn.classList.add('bg-white', 'text-gray-700');
+      });
+      event.target.classList.remove('bg-white', 'text-gray-700');
+      event.target.classList.add('bg-rose-900', 'text-white');
+      renderProducts();
+    }
+
+    function addToCart(id) {
+      const prod = products.find(p => p.id === id);
+      const exists = cart.find(item => item.id === id);
+      if (exists) {
+        exists.qty += 1;
+      } else {
+        cart.push({ ...prod, qty: 1 });
+      }
+      updateCartUI();
+      toggleCart();
+    }
+
+    function updateCartUI() {
+      const count = cart.reduce((acc, item) => acc + item.qty, 0);
+      const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+      
+      document.getElementById('cartCount').innerText = count;
+      document.getElementById('cartTotal').innerText = `৳ ${total.toLocaleString('bn-BD')}`;
+
+      const cartItems = document.getElementById('cartItems');
+      if (cart.length === 0) {
+        cartItems.innerHTML = `<p class="text-center text-xs text-gray-400 py-8">আপনার কার্ট খালি রয়েছে</p>`;
+        return;
+      }
+
+      cartItems.innerHTML = cart.map(item => `
+        <div class="flex items-center justify-between border-b pb-3">
+          <img src="${item.img}" class="w-12 h-12 rounded-lg object-cover">
+          <div class="flex-1 px-3">
+            <h5 class="text-xs font-bold text-gray-800 line-clamp-1">${item.name}</h5>
+            <p class="text-[11px] text-rose-900 font-semibold">৳ ${item.price} x ${item.qty}</p>
+          </div>
+          <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700 text-xs">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(item => item.id !== id);
+      updateCartUI();
+    }
+
+    function toggleCart() {
+      const sidebar = document.getElementById('cartSidebar');
+      sidebar.classList.toggle('hidden');
+    }
+
+    // Hidden Admin Modal Handlers
+    function openAdminModal() {
+      document.getElementById('adminLoginModal').classList.remove('hidden');
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminLoginModal').classList.add('hidden');
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value;
+      const pass = document.getElementById('adminPassword').value;
+      const errEl = document.getElementById('loginError');
+
+      if (email === 'admin@angonatrendz.com' && pass === 'Admin@123456') {
+        errEl.classList.add('hidden');
+        closeAdminModal();
+        openAdminPanel();
+      } else {
+        errEl.innerText = "ভুল ইমেইল অথবা পাসওয়ার্ড!";
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    function openAdminPanel() {
+      document.getElementById('adminPanel').classList.remove('hidden');
+      renderAdminProducts();
+    }
+
+    function closeAdminPanel() {
+      document.getElementById('adminPanel').classList.add('hidden');
+    }
+
+    function handleAdminLogout() {
+      closeAdminPanel();
+      alert("অ্যাডমিন সেশন বন্ধ করা হয়েছে।");
+    }
+
+    function renderAdminProducts() {
+      const container = document.getElementById('adminProductList');
+      container.innerHTML = products.map(p => `
+        <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs">
+          <div class="flex items-center space-x-2">
+            <img src="${p.img}" class="w-8 h-8 rounded-md object-cover">
+            <div>
+              <p class="font-bold text-gray-800">${p.name}</p>
+              <p class="text-gray-500">৳ ${p.price}</p>
+            </div>
+          </div>
+          <button onclick="deleteProduct('${p.id}')" class="text-red-600 hover:text-red-800 p-1">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function handleAddProduct(e) {
+      e.preventDefault();
+      const newProd = {
+        id: Date.now().toString(),
+        name: document.getElementById('pName').value,
+        category: document.getElementById('pCategory').value,
+        price: Number(document.getElementById('pPrice').value),
+        fabric: document.getElementById('pFabric').value || 'অন্যান্য',
+        img: document.getElementById('pImg').value
+      };
+
+      products.unshift(newProd);
+      renderProducts();
+      renderAdminProducts();
+      e.target.reset();
+      alert('নতুন পূজা স্পেশাল শাড়ি সফলভাবে যোগ করা হয়েছে!');
+    }
+
+    function deleteProduct(id) {
+      if (confirm('আপনি কি নিশ্চিত এই শাড়িটি ডিলিট করতে চান?')) {
+        products = products.filter(p => p.id !== id);
+        renderProducts();
+        renderAdminProducts();
+      }
+    }
+  </script>
+</body>
+</html>
